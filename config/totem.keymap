@@ -9,10 +9,9 @@
 //                                                                      ▀  ▀  ▀
 //
 // ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
-       
-/*
- * Optimized 38-Key Programmer Layout for Totem
- * Based on Colemak-DH and Timeless Home Row Mods
+    /*
+ * Optimized 38-Key Programmer Layout for Totem (5x3+3 + Side Keys)
+ * Features: Timeless HRMs, Isolated Shift, Caps Word, Key Repeat
  */
 
 #include <behaviors.dtsi>
@@ -29,9 +28,11 @@
 / {
     behaviors {
         /*
-         * Timeless Home Row Mods
-         * Flavor: tap-preferred (prioritizes typing over holding)
-         * Hold-trigger-on-release: Mod only activates if you press another key while holding
+         * TIMELESS HOME ROW MODS
+         * Configuration:
+         * - Tap Preferred: Tapping always sends the letter, even if held slightly too long.
+         * - Hold Trigger on Release: Modifier ONLY activates if you press another key 
+         *   while holding this one. This prevents misfires during fast rolls.
          */
         hm: homerow_mods {
             compatible = "zmk,behavior-hold-tap";
@@ -40,13 +41,15 @@
             tapping-term-ms = <200>;
             quick-tap-ms = <200>;
             flavor = "tap-preferred";
+            require-prior-idle-ms = <125>; /* Adds extra safety for fast typists */
             hold-trigger-on-release; 
             bindings = <&kp>, <&kp>;
         };
 
         /*
-         * Isolated Shift (Thumb)
-         * Flavor: hold-preferred (ensures Shift activates reliably)
+         * THUMB MODIFIER (SHIFT/LAYER)
+         * Configuration:
+         * - Hold Preferred: We want Shift to activate reliably when chording.
          */
         tm: thumb_mod {
             compatible = "zmk,behavior-hold-tap";
@@ -59,76 +62,68 @@
         };
     };
 
-    combos {
-        compatible = "zmk,combos";
-        /* Caps Word: Press Left Shift + Right Shift (Thumbs) together */
-        combo_caps_word {
-            timeout-ms = <50>;
-            key-positions = <36 39>; /* Adjust based on exact thumb indices if needed, these are inner thumbs */
-            bindings = <&caps_word>;
-        };
-    };
-
     keymap {
         compatible = "zmk,keymap";
 
         /*
          * Layer 0: BASE (Colemak-DH)
-         * HRMs: Left (Alt, GUI, Ctrl, Alpha) | Right (Alpha, Ctrl, GUI, Alt)
-         * Thumbs: Sym/Space/Tab | Backspace/Enter-Shift/Num
+         * -----------------------------------------------------------------------------------------
+         * |  Q  |  W  |  F  |  P  |  B  |   |  J  |  L  |  U  |  Y  |  '  |
+         * |  A  |  R  |  S  |  T  |  G  |   |  M  |  N  |  E  |  I  |  O  | (HRMs: Alt/GUI/Ctrl/Shift is excluded)
+         * | CAPS|  Z  |  X  |  C  |  D  | V |  K  |  H  |  ,  |  .  | RPT | (Side Pinkies: CapsWord & KeyRepeat)
+         *             | SYM | SPC | TAB |   | DEL | RET | NUM |
          */
         default_layer {
             bindings = <
-            /* Pinky Col       Ring      Middle    Index     Index (Inner)    |   Index (Inner) Index     Middle    Ring      Pinky Col */
-              &kp Q           &kp W     &kp F     &kp P     &kp B                &kp J         &kp L     &kp U     &kp Y     &kp APOS
-              &hm LALT A      &hm LGUI R &hm LCTRL S &kp T   &kp G                &kp M         &kp N     &hm RCTRL E &hm RGUI I &hm RALT O
-      &kp Z   &kp X           &kp C     &kp D     &kp V     &kp Z                &kp K         &kp H     &kp COMMA &kp DOT   &kp FSLH  &kp SEMI
-                                        &lt SYM TAB &kp SPACE &kp ESC            &kp DEL       &tm RSHIFT RET  &lt NUM BSPC
+    /* Top Row */
+    &kp Q           &kp W       &kp F       &kp P       &kp B           &kp J        &kp L       &kp U       &kp Y       &kp APOS
+    /* Middle Row (Home Row Mods) */
+    &hm LALT A      &hm LGUI R  &hm LCTRL S &kp T       &kp G           &kp M        &kp N       &hm RCTRL E &hm RGUI I  &hm RALT O
+    /* Bottom Row (Includes Side Pinkies) */
+    &caps_word      &kp Z       &kp X       &kp C       &kp D   &kp V   &kp K        &kp H       &kp COMMA   &kp DOT     &key_repeat
+    /* Thumb Cluster */
+                                &lt SYM TAB &kp SPACE   &kp ESC         &kp BSPC     &tm RSHIFT RET &lt NUM DEL
             >;
         };
 
         /*
-         * Layer 1: SYMBOLS (Programming Focused)
-         * Activated by Left Thumb
-         * Strategy: Paired delimiters on Home Row, Math on Left, Brackets on Right
+         * Layer 1: SYMBOLS (Left Thumb Hold)
+         * -----------------------------------------------------------------------------------------
+         * Optimized for inward rolls. Paired delimiters on Home Row.
          */
         sym_layer {
             bindings = <
-              &kp EXCL        &kp AT    &kp HASH  &kp DLLR  &kp PRCNT            &kp CARET     &kp AMPS  &kp STAR  &kp MINUS &kp GRAVE
-              &kp BSLH        &kp PIPE  &kp LBRC  &kp LPAR  &kp LBKT             &kp RBKT      &kp RPAR  &kp RBRC  &kp EQUAL &kp PLUS
-      &trans  &trans          &trans    &trans    &trans    &trans               &trans        &trans    &trans    &trans    &trans    &trans
-                                        &trans    &trans    &trans               &trans        &trans    &trans
+    &kp EXCL        &kp AT      &kp HASH    &kp DLLR    &kp PRCNT       &kp CARET    &kp AMPS    &kp STAR    &kp MINUS   &kp GRAVE
+    &kp BSLH        &kp PIPE    &kp LBRC    &kp LPAR    &kp LBKT        &kp RBKT     &kp RPAR    &kp RBRC    &kp EQUAL   &kp PLUS
+    &trans          &trans      &trans      &trans      &trans  &trans  &trans       &trans      &trans      &trans      &kp FSLH
+                                &trans      &trans      &trans          &trans       &trans      &trans
             >;
         };
 
         /*
-         * Layer 2: NUMBER & NAV (VIM + Numpad)
-         * Activated by Right Thumb
-         * Left Hand: Numpad (Top 789, Home 456, Bot 123)
-         * Right Hand: Navigation (Home Row HJKL)
+         * Layer 2: NUM & NAV (Right Thumb Hold)
+         * -----------------------------------------------------------------------------------------
+         * Left Hand: Standard Numpad | Right Hand: VIM Navigation
          */
         num_layer {
             bindings = <
-              &trans          &kp N7    &kp N8    &kp N9    &trans               &kp PG_UP     &kp HOME  &kp UP    &kp END   &trans
-              &trans          &kp N4    &kp N5    &kp N6    &kp N0               &kp PG_DN     &kp LEFT  &kp DOWN  &kp RIGHT &trans
-      &trans  &trans          &kp N1    &kp N2    &kp N3    &trans               &trans        &trans    &trans    &trans    &trans    &trans
-                                        &trans    &trans    &trans               &trans        &trans    &trans
+    &trans          &kp N7      &kp N8      &kp N9      &trans          &kp PG_UP    &kp HOME    &kp UP      &kp END     &trans
+    &trans          &kp N4      &kp N5      &kp N6      &kp N0          &kp PG_DN    &kp LEFT    &kp DOWN    &kp RIGHT   &trans
+    &trans          &trans      &kp N1      &kp N2      &kp N3  &trans  &trans       &trans      &trans      &trans      &trans
+                                &mo SYS     &trans      &trans          &trans       &trans      &trans
             >;
         };
 
         /*
-         * Layer 3: SYSTEM (F-Keys, Media, BT)
-         * Activated by holding both Layer Thumbs (Tri-layer) or add a specific toggle if preferred
-         * Currently accessible if you map a key to &mo SYS. 
-         * For now, I will map it to the "Side Pinky" on Base layer if you prefer, 
-         * or you can access it via Combo.
+         * Layer 3: SYSTEM (Accessed via Lower Thumb on Num Layer or Combo)
+         * -----------------------------------------------------------------------------------------
          */
         sys_layer {
             bindings = <
-              &kp F12         &kp F7    &kp F8    &kp F9    &kp F10              &bt BT_SEL 0  &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_CLR
-              &kp F11         &kp F4    &kp F5    &kp F6    &trans               &out OUT_BLE  &trans    &trans    &trans    &trans
-      &trans  &trans          &kp F1    &kp F2    &kp F3    &trans               &out OUT_USB  &trans    &trans    &trans    &trans    &trans
-                                        &trans    &trans    &trans               &trans        &trans    &trans
+    &kp F12         &kp F7      &kp F8      &kp F9      &kp F10         &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_CLR
+    &kp F11         &kp F4      &kp F5      &kp F6      &trans          &out OUT_BLE &trans      &trans      &trans      &trans
+    &trans          &trans      &kp F1      &kp F2      &kp F3  &trans  &out OUT_USB &trans      &trans      &trans      &bootloader
+                                &trans      &trans      &trans          &trans       &trans      &trans
             >;
         };
     };

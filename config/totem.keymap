@@ -9,7 +9,7 @@
 //                                                                      ▀  ▀  ▀
 //
 // ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
-   /*
+/*
  * Optimized Totem Layout (Programmer Edition v2)
  * - Swapped GUI/ALT
  * - Nav on Left (ESDF), Num on Right
@@ -48,14 +48,7 @@
         };
     };
 
-    combos {
-        compatible = "zmk,combos";
-
-        second_layer_caps {
-            bindings = <&lt 2 CAPS>;
-            key-positions = <34 33>;
-        };
-    };
+    combos { compatible = "zmk,combos"; };
 
     keymap {
         compatible = "zmk,keymap";
@@ -73,10 +66,10 @@
 
         default_layer {
             bindings = <
-            &kp Q       &kp W       &kp F        &kp P        &kp B                       &kp J                &kp L        &kp U        &kp Y       &kp APOS
-            &hm LGUI A  &hm LALT R  &hm LCTRL S  &kp T        &kp G                       &kp M                &kp N        &hm RCTRL E  &hm RALT I  &hm RGUI O
-&caps_word  &kp Z       &kp X       &kp C        &kp D        &kp V                       &kp K                &kp H        &kp COMMA    &kp DOT     &kp FSLH    &key_repeat
-                                    &kp ESC      &lt 1 SPACE  &mt LEFT_SHIFT BACKSPACE    &mt RIGHT_SHIFT DEL  &lt 1 ENTER  &kp TAB
+            &kp Q       &kp W       &kp F         &kp P        &kp B                       &kp J                &kp L        &kp U        &kp Y       &kp APOS
+            &hm LGUI A  &hm LALT R  &hm LCTRL S   &kp T        &kp G                       &kp M                &kp N        &hm RCTRL E  &hm RALT I  &hm RGUI O
+&caps_word  &kp Z       &kp X       &kp C         &kp D        &kp V                       &kp K                &kp H        &kp COMMA    &kp DOT     &kp FSLH    &key_repeat
+                                    &lt 2 ESCAPE  &lt 1 SPACE  &mt LEFT_SHIFT BACKSPACE    &mt RIGHT_SHIFT DEL  &lt 1 ENTER  &lt 2 TAB
             >;
         };
 

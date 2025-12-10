@@ -9,31 +9,32 @@
 //                                                                      ▀  ▀  ▀
 //
 // ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
-    /*
- * Optimized 38-Key Programmer Layout for Totem (5x3+3 + Side Keys)
- * Features: Timeless HRMs, Isolated Shift, Caps Word, Key Repeat
+   /*
+ * Optimized Totem Layout (Programmer Edition v2)
+ * - Swapped GUI/ALT
+ * - Nav on Left (ESDF), Num on Right
+ * - Center-facing Brackets
  */
 
 #include <behaviors.dtsi>
-#include <dt-bindings/zmk/keys.h>
 #include <dt-bindings/zmk/bt.h>
+#include <dt-bindings/zmk/keys.h>
 #include <dt-bindings/zmk/outputs.h>
 
 /* Layer Definitions */
+
 #define BASE 0
 #define SYM  1
-#define NUM  2
+#define NUM  2  /* Acts as NAV (Left) and NUM (Right) */
 #define SYS  3
 
 / {
     behaviors {
         /*
          * TIMELESS HOME ROW MODS
-         * Configuration:
-         * - Tap Preferred: Tapping always sends the letter, even if held slightly too long.
-         * - Hold Trigger on Release: Modifier ONLY activates if you press another key 
-         *   while holding this one. This prevents misfires during fast rolls.
+         * Order: GUI | ALT | CTRL | ALPHA
          */
+
         hm: homerow_mods {
             compatible = "zmk,behavior-hold-tap";
             label = "HOMEROW_MODS";
@@ -41,24 +42,18 @@
             tapping-term-ms = <200>;
             quick-tap-ms = <200>;
             flavor = "tap-preferred";
-            require-prior-idle-ms = <125>; /* Adds extra safety for fast typists */
-            hold-trigger-on-release; 
+            require-prior-idle-ms = <125>;
+            hold-trigger-on-release;
             bindings = <&kp>, <&kp>;
         };
+    };
 
-        /*
-         * THUMB MODIFIER (SHIFT/LAYER)
-         * Configuration:
-         * - Hold Preferred: We want Shift to activate reliably when chording.
-         */
-        tm: thumb_mod {
-            compatible = "zmk,behavior-hold-tap";
-            label = "THUMB_MOD";
-            #binding-cells = <2>;
-            tapping-term-ms = <200>;
-            quick-tap-ms = <200>;
-            flavor = "hold-preferred";
-            bindings = <&kp>, <&kp>;
+    combos {
+        compatible = "zmk,combos";
+
+        second_layer_caps {
+            bindings = <&lt 2 CAPS>;
+            key-positions = <34 33>;
         };
     };
 
@@ -69,61 +64,70 @@
          * Layer 0: BASE (Colemak-DH)
          * -----------------------------------------------------------------------------------------
          * |  Q  |  W  |  F  |  P  |  B  |   |  J  |  L  |  U  |  Y  |  '  |
-         * |  A  |  R  |  S  |  T  |  G  |   |  M  |  N  |  E  |  I  |  O  | (HRMs: Alt/GUI/Ctrl/Shift is excluded)
-         * | CAPS|  Z  |  X  |  C  |  D  | V |  K  |  H  |  ,  |  .  | RPT | (Side Pinkies: CapsWord & KeyRepeat)
-         *             | SYM | SPC | TAB |   | DEL | RET | NUM |
+         * |  A  |  R  |  S  |  T  |  G  |   |  M  |  N  |  E  |  I  |  O  |
+         * |(GUI)|(ALT)|(CTL)|     |     |   |     |     |(CTL)|(ALT)|(GUI)|
+         * | CAPS|  Z  |  X  |  C  |  D  | V |  K  |  H  |  ,  |  .  |  /  | RPT |
+         *             | ESC | SPC | BKSP|   | DEL | RET | TAB |
+         *                   (SYM)             (NUM)
          */
+
         default_layer {
             bindings = <
-    /* Top Row */
-    &kp Q           &kp W       &kp F       &kp P       &kp B           &kp J        &kp L       &kp U       &kp Y       &kp APOS
-    /* Middle Row (Home Row Mods) */
-    &hm LALT A      &hm LGUI R  &hm LCTRL S &kp T       &kp G           &kp M        &kp N       &hm RCTRL E &hm RGUI I  &hm RALT O
-    /* Bottom Row (Includes Side Pinkies) */
-    &caps_word      &kp Z       &kp X       &kp C       &kp D   &kp V   &kp K        &kp H       &kp COMMA   &kp DOT     &key_repeat
-    /* Thumb Cluster */
-                                &lt SYM TAB &kp SPACE   &kp ESC         &kp BSPC     &tm RSHIFT RET &lt NUM DEL
+            &kp Q       &kp W       &kp F        &kp P        &kp B                       &kp J                &kp L        &kp U        &kp Y       &kp APOS
+            &hm LGUI A  &hm LALT R  &hm LCTRL S  &kp T        &kp G                       &kp M                &kp N        &hm RCTRL E  &hm RALT I  &hm RGUI O
+&caps_word  &kp Z       &kp X       &kp C        &kp D        &kp V                       &kp K                &kp H        &kp COMMA    &kp DOT     &kp FSLH    &key_repeat
+                                    &kp ESC      &lt 1 SPACE  &mt LEFT_SHIFT BACKSPACE    &mt RIGHT_SHIFT DEL  &lt 1 ENTER  &kp TAB
             >;
         };
 
         /*
-         * Layer 1: SYMBOLS (Left Thumb Hold)
+         * Layer 1: SYMBOLS
          * -----------------------------------------------------------------------------------------
-         * Optimized for inward rolls. Paired delimiters on Home Row.
+         * - Brackets face each other on Inner Columns (Left: [({ Right: })])
+         * - General symbols distributed for flow
          */
+
         sym_layer {
             bindings = <
-    &kp EXCL        &kp AT      &kp HASH    &kp DLLR    &kp PRCNT       &kp CARET    &kp AMPS    &kp STAR    &kp MINUS   &kp GRAVE
-    &kp BSLH        &kp PIPE    &kp LBRC    &kp LPAR    &kp LBKT        &kp RBKT     &kp RPAR    &kp RBRC    &kp EQUAL   &kp PLUS
-    &trans          &trans      &trans      &trans      &trans  &trans  &trans       &trans      &trans      &trans      &kp FSLH
-                                &trans      &trans      &trans          &trans       &trans      &trans
+        &kp EXCL  &kp AT    &kp HASH   &kp DLLR           &kp LBKT    &kp RBKT  &kp AMPS      &kp STAR   &kp UNDERSCORE  &kp GRAVE
+        &kp BSLH  &kp PIPE  &kp PRCNT  &kp CARET          &kp LPAR    &kp RPAR  &kp EQUAL     &kp COLON  &kp MINUS       &kp SEMI
+&trans  &trans    &trans    &kp TILDE  &kp DOUBLE_QUOTES  &kp LBRC    &kp RBRC  &kp QUESTION  &kp PLUS   &trans          &trans     &trans
+                            &trans     &trans             &trans      &trans    &trans        &trans
             >;
         };
 
         /*
-         * Layer 2: NUM & NAV (Right Thumb Hold)
+         * Layer 2: NAV (Left) & NUM (Right)
          * -----------------------------------------------------------------------------------------
-         * Left Hand: Standard Numpad | Right Hand: VIM Navigation
+         * LEFT HAND (Nav):
+         * - E/S/D/F = Up/Left/Down/Right (WASD shifted to home row area)
+         * - Home/End available
+         * RIGHT HAND (Num):
+         * - Numpad 789 / 456 / 123 / 0
+         * - Algorithmic Math: + - * / =
+         * - Modifiers (Ctrl/Shift) & Delete available on idle hands
          */
-        num_layer {
+
+        num_nav_layer {
             bindings = <
-    &trans          &kp N7      &kp N8      &kp N9      &trans          &kp PG_UP    &kp HOME    &kp UP      &kp END     &trans
-    &trans          &kp N4      &kp N5      &kp N6      &kp N0          &kp PG_DN    &kp LEFT    &kp DOWN    &kp RIGHT   &trans
-    &trans          &trans      &kp N1      &kp N2      &kp N3  &trans  &trans       &trans      &trans      &trans      &trans
-                                &mo SYS     &trans      &trans          &trans       &trans      &trans
+        &kp PG_UP  &kp HOME  &kp UP      &kp END    &trans    &kp KP_PLUS   &kp N7  &kp N8   &kp N9  &kp KP_MULTIPLY
+        &kp PG_DN  &kp LEFT  &kp DOWN    &kp RIGHT  &trans    &kp KP_MINUS  &kp N4  &kp N5   &kp N6  &kp KP_DIVIDE
+&trans  &trans     &trans    &trans      &trans     &trans    &kp KP_EQUAL  &kp N1  &kp N2   &kp N3  &kp BSPC         &trans
+                             &kp LSHIFT  &kp LCTRL  &trans    &trans        &kp N0  &mo SYS
             >;
         };
 
         /*
-         * Layer 3: SYSTEM (Accessed via Lower Thumb on Num Layer or Combo)
-         * -----------------------------------------------------------------------------------------
+         * Layer 3: SYSTEM (F-Keys, BT)
+         * Accessed by holding Right Outer Thumb (Tab position mapped to &mo SYS in previous layer)
          */
+
         sys_layer {
             bindings = <
-    &kp F12         &kp F7      &kp F8      &kp F9      &kp F10         &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_CLR
-    &kp F11         &kp F4      &kp F5      &kp F6      &trans          &out OUT_BLE &trans      &trans      &trans      &trans
-    &trans          &trans      &kp F1      &kp F2      &kp F3  &trans  &out OUT_USB &trans      &trans      &trans      &bootloader
-                                &trans      &trans      &trans          &trans       &trans      &trans
+             &kp F12  &kp F7  &kp F8  &kp F9  &kp F10    &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_CLR
+             &kp F11  &kp F4  &kp F5  &kp F6  &trans     &out OUT_BLE  &trans        &trans        &trans        &trans
+&bootloader  &trans   &kp F1  &kp F2  &kp F3  &trans     &out OUT_USB  &trans        &trans        &trans        &trans      &sys_reset
+                              &trans  &trans  &trans     &trans        &trans        &trans
             >;
         };
     };

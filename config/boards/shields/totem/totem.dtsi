@@ -42,3 +42,7 @@
             ;
     };
 };
+
+&spi2 {
+    status = "disabled";
+};
